@@ -1,27 +1,37 @@
-# 🏛️ Modelo de Gobernanza del Proyecto - Project Jaina RaidSuite
+# 🏛️ Modelo de Gobernanza del Proyecto — Project Jaina Raid Suite
 
-**Versión del Documento:** 1.0.0  
-**Fecha de Entrada en Vigor:** 27 de Septiembre de 2026  
-**Líder del Proyecto / Autor:** DarckRovert (Ingame: Elnazzareno) & Antigravity (Mythos 5)  
-**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/) - Project Jaina  
-**Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340)
+**Versión del Documento:** 1.0.1  
+**Fecha de Entrada en Vigor:** 10 de Octubre de 2026  
+**Líder del Proyecto & Autor:** DarckRovert (Ingame: `Elnazzareno`)  
+**Staff AI Engineer:** Antigravity L9 (Mythos 5)  
+**Servidor Destino:** [Project Jaina](https://darckrovert.github.io/ProjectJaina_Web/)  
+**Entorno de Ejecución:** World of Warcraft 3.3.5a (Build 12340) | Interfaz: `30300`  
 
 ---
 
 ## 1. Misión y Alcance
 
-**Jaina** es una suite modular avanzada y de alto rendimiento diseñada para la optimización de incursiones (Raids), sincronización de banda, gestión de combate y herramientas de utilidad para clientes de World of Warcraft 3.3.5a (Wrath of the Lich King).
+**ProjectJaina_RaidSuite** es un componente oficial de la suite de interfaz de usuario de **Project Jaina**.
+Suite táctica de bandas y mazmorras con control de líder, monitoreo de tiempos de reutilización (CDs), comprobación de listos, asignaciones de tanques y distribución de botín.
 
-El objetivo primordial del proyecto es ofrecer:
-- **Rendimiento Máximo:** Cero fugas de memoria y mínimo impacto en el Garbage Collector (GC) de Lua 5.1 durante encuentros de alta densidad (25 jugadores heroico).
-- **Aislamiento Seguro (Zero Taint):** Estricto respeto por las fronteras seguras de la interfaz de Blizzard para garantizar que ningún módulo contamine el entorno de combate.
-- **Sincronización Idempotente:** Protocolo de mensajería seguro y controlado entre miembros del grupo o hermandad mediante canales de addon.
+### Objetivos Primordiales del Sistema:
+1. **Rendimiento Extremo (Cabinas de Internet & Equipos Modestos):**
+   - Ejecución fluida a 60 FPS estables sin micro-parones en resoluciones desde $800\times600$ hasta $1920\times1080$.
+   - Aislamiento estricto de eventos en `OnUpdate` para prevenir saturación de CPU.
+2. **Seguridad de Red y Límite Inviolable de Paquetes:**
+   - Todo mensaje transmitido mediante `SendAddonMessage` respeta el límite estricto de **255 bytes por paquete** de la versión 3.3.5a.
+   - Prefijo de Red Registrado: `WP_RAID`.
+3. **Persistencia Segura e Idempotencia:**
+   - La persistencia de datos utiliza variables guardadas (`ProjectJaina_RaidSuiteDB`) y/o sincronización atómica con el backend del servidor (`Hooks de grupo y eventos de combate CLEU`).
+   - Cero pérdida de datos ante desconexiones intempestivas o reinicios con sistemas tipo *Deep Freeze*.
+4. **Cumplimiento de la Política de Blizzard (Blizzard Custom UI Policy 2009):**
+   - Software 100% gratuito, libre de código malicioso, sin ingeniería inversa ni modificación de binarios ejecutables (`WoW.exe`).
 
 ---
 
 ## 2. Estructura de Roles y Responsabilidades
 
-El proyecto Jaina se rige bajo un modelo de **Liderazgo Técnico Centralizado (Benevolent Governance)** con aportes comunitarios guiados.
+El proyecto se rige bajo un modelo de **Liderazgo Técnico Centralizado y Revisión por Pares**:
 
 ```
        ┌─────────────────────────────────────────┐
@@ -30,80 +40,42 @@ El proyecto Jaina se rige bajo un modelo de **Liderazgo Técnico Centralizado (B
        └────────────────────┬────────────────────┘
                             │
        ┌────────────────────▼────────────────────┐
-       │     Mantenedores del Core (Core Team)   │
-       │    (Arquitectura, Taint, Protocolos)    │
+       │     Staff AI & Arquitectura de Core     │
+       │        Antigravity L9 (Mythos 5)        │
        └────────────────────┬────────────────────┘
                             │
        ┌────────────────────▼────────────────────┐
-       │    Contribuidores y Especialistas QA    │
-       │ (Módulos de Clase, Locales, Raids)      │
+       │      Equipo de Desarrollo y Staff       │
+       │   (Core Eluna, Addon Lua, Moderación)   │
        └─────────────────────────────────────────┘
 ```
 
 ### 2.1. Project Lead (Líder del Proyecto)
-- **Titular:** DarckRovert (Ingame: `Elnazzareno`).
+- **Titular:** DarckRovert (Elnazzareno).
 - **Atribuciones:**
-  - Control de la visión a largo plazo y roadmap del addon.
-  - Aprobación final y fusión (merge) de Pull Requests en la rama `main`.
-  - Firma y publicación de lanzamientos oficiales (Releases) y tags en GitHub.
-  - Veto técnico sobre cambios que comprometan el rendimiento o la compatibilidad con el cliente 3.3.5a.
+  - Control de la visión arquitectónica, experiencia de usuario y compatibilidad.
+  - Aprobación y fusión final de código en la rama `main` del repositorio oficial.
+  - Firma y liberación de versiones oficiales estables.
+  - Veto técnico sobre cambios que comprometan la estabilidad del cliente o el rendimiento del juego.
 
-### 2.2. Core Maintainers (Mantenedores del Core)
+### 2.2. Staff AI & Desarrolladores
 - **Responsabilidades:**
-  - Mantenimiento del ciclo de vida del addon (`Jaina.lua`, `ProjectJaina_RaidSuite.toc`).
-  - Supervisión de los motores centrales: `CLEUDispatcher`, `AlertHub`, `ProfileManager`, `Theme` y `GUI`.
-  - Verificación de ausencia de APIs incompatibles (e.g., funciones de MoP/Retail en cliente 3.3.5a).
-  - Revisión y optimización de consumo de memoria y CPU en raids.
-
-### 2.3. Contribuidores (Contributors)
-- Cualquier desarrollador de la comunidad que aporte mejoras de código, correcciones de errores (bug fixes), localización o documentación mediante Pull Requests.
-- Todo contribuidor debe alinearse con las pautas de estilo de [CONTRIBUTING.md](CONTRIBUTING.md) y este documento de gobernanza.
+  - Mantenimiento del código fuente en Lua 5.1 y FrameXML compatible con WotLK 3.3.5a.
+  - Verificación de no-taint en subsistemas protegidos de Blizzard.
+  - Mantenimiento de la integridad documental y sincronización bidireccional cliente-servidor.
 
 ---
 
-## 3. Toma de Decisiones Técnicas
+## 3. Flujo de Desarrollo, Cambios y RFCs
 
-Las decisiones dentro de Jaina siguen el principio de **Consenso Técnico Fundamentado con Veto del Líder**:
-
-1. **Discusión Abierta:** Los debates técnicos se llevan a cabo de forma transparente en GitHub Issues o Pull Requests.
-2. **Criterio Empírico:** Las decisiones sobre refactorizaciones o inclusiones de librerías deben respaldarse con evidencia medible (tiempos de CPU, memoria asignada, ausencia de taint).
-3. **Desempate:** En caso de divergencia irreconciliable o decisiones de alto impacto arquitectónico, el Project Lead tiene la autoridad final de decisión.
+1. **Ramas de Trabajo:** Todo desarrollo se realiza en ramas de características (`feature/*` o `fix/*`) desprendidas de `main`.
+2. **Revisión de Código Obligatoria:** Ningún cambio se incorpora sin revisión de sintaxis Lua estricta y prueba empírica en el cliente de prueba.
+3. **Prohibición de APIs de Retail:** Queda estrictamente vetado el uso de APIs no existentes en 3.3.5a (`SetColorTexture`, `C_Timer.After` sin polyfill, `AnimationGroup` no compatibles).
 
 ---
 
-## 4. Proceso de Cambio y Propuestas (RFC - Request for Comments)
+## 4. Contacto y Reporte de Incidencias
 
-Para cambios significativos en el addon, se requiere la apertura de una propuesta formal (Issue con prefijo `[RFC]`) antes de enviar código:
-
-### Casos que requieren RFC previo:
-- Incorporación de una nueva librería de terceros (`Libs/`).
-- Modificación del protocolo de serialización o mensajería de addon (`RaidSync`, `AutoSync`, `VotingSystem`).
-- Reestructuración de la base de datos de perfiles (`JainaDB`).
-- Rediseño mayor de la interfaz visual (`JainaSphere`, `Dashboard`, `RaidPanel`).
-
----
-
-## 5. Ciclo de Lanzamientos y Versionado
-
-Jaina utiliza **Versionado Semántico (SemVer)** adaptado al ecosistema de WoW: `MAJOR.MINOR.PATCH`
-
-- **MAJOR (vX.0.0):** Cambios arquitectónicos profundos, rediseño completo del núcleo o reestructuración de la base de datos de perfiles que requiera migración forzada.
-- **MINOR (vx.Y.0):** Nuevos módulos funcionales (e.g. soporte para nuevas bandas, nuevos modos de inspección o utilidades) manteniendo total retrocompatibilidad.
-- **PATCH (vx.y.Z):** Corrección de bugs, optimizaciones de rendimiento, actualización de traducciones o ajustes menores de interfaz.
-
-### Estabilidad de Rama:
-- `main`: Representa el estado estable listo para producción y juego real. Todo commit en `main` debe ser ejecutable sin errores en el cliente 3.3.5a.
-- `feature/*` o `fix/*`: Ramas de trabajo donde se desarrollan funcionalidades o parches antes de su revisión.
-
----
-
-## 6. Resolución de Conflictos
-
-1. Todo desacuerdo técnico debe resolverse analizando el impacto en el usuario final, la seguridad y el rendimiento del cliente.
-2. No se tolerarán descalificaciones personales ni actitudes hostiles, aplicándose estrictamente las medidas contempladas en [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-
----
-
-## 7. Modificaciones a la Gobernanza
-
-Este documento puede ser revisado periódicamente por el Project Lead para adaptarse a las necesidades del proyecto y de la comunidad de jugadores y desarrolladores.
+Las incidencias técnicas, propuestas de mejora y reportes de seguridad deben remitirse a través de los canales oficiales:
+* **Portal Web Oficial:** [https://darckrovert.github.io/ProjectJaina_Web/](https://darckrovert.github.io/ProjectJaina_Web/)
+* **Repositorio GitHub:** [https://github.com/DarckRovert/ProjectJaina_RaidSuite](https://github.com/DarckRovert/ProjectJaina_RaidSuite)

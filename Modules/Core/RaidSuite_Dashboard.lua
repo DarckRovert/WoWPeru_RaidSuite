@@ -86,11 +86,12 @@ function DB:CreateDashboardFrame()
     header:SetHeight(44)
     f.headerBar = header
 
-    -- Logo & Title
+    -- Logo & Title (Ratio 1:1 circular centrado en header de 44px)
     local logo = header:CreateTexture(nil, "ARTWORK")
-    logo:SetSize(72, 36)
-    logo:SetPoint("LEFT", header, "LEFT", 4, 0)
-    logo:SetTexture("Interface\\AddOns\\Jaina_RaidSuite\\Media\\jaina_logo.tga")
+    logo:SetSize(36, 36)
+    logo:SetPoint("LEFT", header, "LEFT", 8, 0)
+    logo:SetTexture("Interface\\AddOns\\ProjectJaina_RaidSuite\\Media\\jaina_logo.tga")
+    logo:SetBlendMode("BLEND")
     f.logo = logo
 
     local title = header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
